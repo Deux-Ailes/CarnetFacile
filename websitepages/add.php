@@ -577,7 +577,7 @@
             
             //Création de toutes les variables qui seront à remplir pour l'envoi du formulaire avec Ajax
             var type, marque, modele, annee, ct, entretien, km;
-            var error, msg_error; //!Sert pour annoncer qu'une erreur s'est produite dans la phase de checking des valeurs
+            var error=0, msg_error; //!Sert pour annoncer qu'une erreur s'est produite dans la phase de checking des valeurs
             console.log('page ready');
 			$("#submit").on('click',function(){
 
@@ -604,32 +604,67 @@
                 //? Test Step 2
                     if((marque = $("#marque").val().trim())==""){
                         msg_error = msg_error+ "\n" + "Vous n'avez pas renseigné de marque.";
+                        error=1;
                     }
 
                     if((modele = $("#modele").val().trim())==""){
                         msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de modèle.";
+                        error=1;
                     }
                     
                     //? Alternative pour obtenir la variable : var dateControl = document.querySelector("div#annee_vehi input[type='date']");                    
                     if((annee = $("#annee").val())==""){
                         msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date valide.";
+                        error=1;
                     }
 
                 //? Test Step 3
 
                     if((km= $("#km").val())=="0"){
                         msg_error = msg_error + "\n" + "Vous n'avez pas renseigné un kilométrage valide.";
+                        error=1;
                     }
 
                     if((ct = $("#ct").val())==""){
                         msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date de contrôle technique valide.";
+                        error=1;
                     }
                 
                     if((entretien = $("#entretien").val())==""){
                         msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date d'entretien valide.";
+                        error=1;
                     }
                     
-
+                    //?Début de la grosse partie avec Ajax
+                    if(error==0)
+                    {
+                        $.ajax(
+						{
+							url: 'add.php',
+							method : 'POST',
+							data: {
+								submitted: 1,
+                                typePHP : type, 
+                                marquePHP : marque,
+                                modelePHP : modele, 
+                                anneePHP : annee, 
+                                ctPHP : ct, 
+                                entretienPHP : entreiten, 
+                                kmPHP : entretien
+							},
+							success: function(response){
+								$("#loading_icon").css({"display":"none"});
+                                console.log(response);
+                                
+                                //?Plein de stuff là dedans
+                                if(response.indexOf('Success') >= 0){
+									window.location = 'garage.php';
+								}
+                            },
+                            dataType: 'text'
+                        }
+								
+                    }
 
             //!FIN DU SUBMIT
             })
