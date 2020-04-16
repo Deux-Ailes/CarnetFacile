@@ -2,8 +2,28 @@
         session_start();
         if(!isset($_SESSION['loggedIN'])){
             header('Location: login.php');
-            alert("Vous ne vous êtes pas connecté");
         }
+
+        if(isset($_POST['submitted'])){
+            $connection = new mysqli('localhost','root','', 'site'); 
+
+            //?Récupération des valeurs
+            
+            $marque = $connection->real_escape_string($_POST['marquePHP']);
+            $modele = $connection->real_escape_string($_POST['modelePHP']);
+            $type = $_POST['typePHP'];
+            $annee = $_POST['anneePHP'];
+            $ct = $_POST['ctPHP'];
+            $entretien = $_POST['entretienPHP'];
+            $km = $_POST['kmPHP'];
+
+            
+
+
+            //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
+        }
+
+
 
         //$query_date = "INSERT INTO tablename (col_name, col_date) VALUES ('DATE: Manual Date', '2008-7-04')”
 
@@ -482,10 +502,12 @@
                         <input type="button" name="previous" class="previous action-button" value="Previous" />
                         <input type="button" class="submit action-button" value="Enregistrer" id="submit">
                     </fieldset>
+                    <p id="resultlog"></p>
                     </div>
                 </form>
             </div>
         </main>
+        
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
@@ -522,25 +544,25 @@
                 next_fs.show();
                 //On cache le fieldsetactuel
                 current_fs.animate({opacity: 0}, {step: function(now, mx){
-                    //L'opacité du fieldset actuel descend à 0 -> Stocké dans "now"
-                    //On va réduire au fur et a mesure l'opacity du fieldset actuel et augmenter celle du futur au fur et à mesure
-                    scale = 1 - (1-now)*0.2;
-                    left= (now * 50)+"%";
-                    opacity=1-now;
-                    current_fs.css({
-                        'transform':'scale('+scale+')',
-                        'position': 'absolute'
-                    });
-                    next_fs.css({'left':left, 'opacity': opacity});
-                },
-                duration: 800,
-                complete: function(){
+                        //L'opacité du fieldset actuel descend à 0 -> Stocké dans "now"
+                        //On va réduire au fur et a mesure l'opacity du fieldset actuel et augmenter celle du futur au fur et à mesure
+                        scale = 1 - (1-now)*0.2;
+                        left= (now * 50)+"%";
+                        opacity=1-now;
+                        current_fs.css({
+                            'transform':'scale('+scale+')',
+                            'position': 'absolute'
+                        });
+                        next_fs.css({'left':left, 'opacity': opacity});
+                    },
+                    duration: 800,
+                    complete: function(){
                     current_fs.hide();
                     animating=false;
-                },
+                    },
 
-                easing: 'easeInOutBack'
-            });
+                    easing: 'easeInOutBack'
+                });
 
 
             });
@@ -586,15 +608,15 @@
                     //var rb_moto = document.getElementById("moto").checked;
                     //var rb_autre = document.getElementById("autre").checked;
 
-                    if($("#voiture").checked){
+                    if(document.getElementById("Voiture").checked){
                         type="voiture";
                     }
 
-                    if($("#moto").checked){
+                    if(document.getElementById("Moto").checked){
                         type="moto";
                     }
 
-                    if($("#autre").checked){
+                    if(document.getElementById("Autre").checked){
                         if((type=$("#Replaced_Autre").val().trim())== ""){
                             msg_error= "Vous n'avez pas rempli le champ du type de véhicule correctement.";
                             error=1;
@@ -639,34 +661,33 @@
                     if(error==0)
                     {
                         $.ajax(
-						{
+						    {
 							url: 'add.php',
 							method : 'POST',
 							data: {
 								submitted: 1,
-                                typePHP : type, 
-                                marquePHP : marque,
-                                modelePHP : modele, 
-                                anneePHP : annee, 
-                                ctPHP : ct, 
-                                entretienPHP : entreiten, 
-                                kmPHP : entretien
+                                typePHP: type, 
+                                marquePHP: marque,
+                                modelePHP: modele, 
+                                anneePHP: annee, 
+                                ctPHP: ct, 
+                                entretienPHP: entretien, 
+                                kmPHP: entretien
 							},
 							success: function(response){
 								$("#loading_icon").css({"display":"none"});
                                 console.log(response);
                                 
                                 //?Plein de stuff là dedans
-                                if(response.indexOf('Success') >= 0){
-									window.location = 'garage.php';
-								}
+                                $("#resultlog").html(response);
                             },
                             dataType: 'text'
-                        }
+                            }
+                        )
 								
                     }
 
-            //!FIN DU SUBMIT
+                //!FIN DU SUBMIT
             })
                 /*
                 //TODO Acquisition des valeurs et trim
