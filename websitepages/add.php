@@ -4,42 +4,49 @@
             header('Location: login.php');
         }
 
+            //TODO Pour bypass ce problème d'ID, effectuer une requête pour l'obtenir dans une autre variable. Moins simple pour la transmission d'infos accros the website mais bien plus simple localement.
         if(isset($_POST['submitted'])){
             $connection = new mysqli('localhost','root','', 'site'); 
             if(isset($_SESSION['username'])){
                 $username=$_SESSION['username'];
-                $id = $_SESSION['id']; 
+                $id = $_SESSION['id'];
+                 //?Récupération des valeurs
+                $type = $_POST['typePHP'];
+                $marque = $connection->real_escape_string($_POST['marquePHP']);
+                $modele = $connection->real_escape_string($_POST['modelePHP']);            
+                $annee = $_POST['anneePHP'];
+                $ct = $_POST['ctPHP'];
+                $entretien = $_POST['entretienPHP'];
+                $km = $_POST['kmPHP'];
+
+                
+                $ctdate = date("Y-m-d", strtotime($ct));
+                $entretiendate = date("Y-m-d", strtotime($entretien));
+
+                $sql = "INSERT INTO vehicules (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                if($stmt= mysqli_prepare($connection, $sql)){
+                    mysqli_stmt_bind_param($stmt, "sssdssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
+                    $typestmt = $type;
+                    $marquestmt = $marque;
+                    $modelestmt = $modele;
+                    $anneestmt = $annee;
+                    $ctstmt = $ctdate;
+                    $entretienstmt = $entretiendate;
+                    $kmstmt = $km;
+                    $idstmt = $id;
+                    exit($id);
+
+                    if(mysqli_stmt_execute($stmt)){				
+                        exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
+                    }
+
+                    exit("On est arrivé au bout, c'est déjà bien, mais ça a bugué");
                 }
                 else{
                     exit("Erreur d'username les bros");
                 }
             
-            //?Récupération des valeurs
-            $type = $_POST['typePHP'];
-            $marque = $connection->real_escape_string($_POST['marquePHP']);
-            $modele = $connection->real_escape_string($_POST['modelePHP']);            
-            $annee = $_POST['anneePHP'];
-            $ct = $_POST['ctPHP'];
-            $entretien = $_POST['entretienPHP'];
-            $km = $_POST['kmPHP'];
-
-            $sql = "INSERT INTO vehicules (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-			if($stmt= mysqli_prepare($connection, $sql)){
-				mysqli_stmt_bind_param($stmt, "ssssssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
-                $typestmt = $type;
-                $marquestmt = $marque;
-                $modelestmt = $modele;
-                $anneestmt = $annee;
-                $ctstmt = $ct;
-                $entretienstmt = $entretien;
-                $kmstmt = $km;
-                $idstmt = $id;
-
-				if(mysqli_stmt_execute($stmt)){				
-					exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
-				}
-
-            exit("On est arrivé au bout, c'est déjà bien, mais ça a bugué");
+            
             //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
             }
             exit("Erreur dans la préparation du insert");
@@ -495,7 +502,7 @@
                             <div id="annee_vehi">
                                 <label for="annee">Ann&eacute;e du v&eacute;hicule</label>
                                 <br>
-                                <input type="date" id="annee" value="" max="<?php echo date('Y-m-d'); ?>">                        
+                                <input type="number" id="annee" value="2020">                       
                             </div>
                             
                             <br>
@@ -659,11 +666,13 @@
                             }
                             
                             //? Alternative pour obtenir la variable : var dateControl = document.querySelector("div#annee_vehi input[type='date']");                    
-                            if((annee = $("#annee").val())==""){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date valide.";
+                            if((annee = ($("#annee").val().trim()))==""){
+                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné d'année valide.";
                                 error=1;
                             }
-
+                            anneenum = parseInt(annee, 10);
+                            
+                            console.log(anneenum);
                         //? Test Step 3
 
                             if((km= $("#km").val())=="0"){
@@ -693,7 +702,7 @@
                                         typePHP: type, 
                                         marquePHP: marque,
                                         modelePHP: modele, 
-                                        anneePHP: annee, 
+                                        anneePHP: anneenum, 
                                         ctPHP: ct, 
                                         entretienPHP: entretien, 
                                         kmPHP: entretien
