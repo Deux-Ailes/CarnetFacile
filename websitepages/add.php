@@ -6,7 +6,18 @@
 
         if(isset($_POST['submitted'])){
             $connection = new mysqli('localhost','root','', 'site'); 
-
+            if(isset($_SESSION['username'])){
+                $username=$_SESSION['username'];
+                $data = $connection->query ("SELECT id FROM users WHERE username='$username'");
+                if($data->num_rows > 0){
+                    $row= $data->fetch_assoc();
+                    $_SESSION['id']=$row.["id"];  
+                }
+                else{}
+                else{
+                    exit("Erreur d'username les bros")
+                }
+            }
             //?Récupération des valeurs
             
             $marque = $connection->real_escape_string($_POST['marquePHP']);
@@ -17,9 +28,21 @@
             $entretien = $_POST['entretienPHP'];
             $km = $_POST['kmPHP'];
 
-            
+            $sql = "INSERT INTO vehicles (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			if($stmt= mysqli_prepare($connection, $sql)){
+				mysqli_stmt_bind_param($stmt, "sssssssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
+				$usernamestmt = $username;
+				$passwordstmt = $password;
+				$emailstmt = $email;
 
+				if(mysqli_stmt_execute($stmt)){
+					$_SESSION['loggedIN'] = '1';
+					$_SESSION['username'] = $username;
+					
+					exit("Inscription réussie, vous allez être redirigé dans 3 secondes");
+				}
 
+            exit("On est arrivé au bout, c'est déjà bien");
             //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
         }
 
@@ -689,44 +712,6 @@
 
                 //!FIN DU SUBMIT
             })
-                /*
-                //TODO Acquisition des valeurs et trim
-				var username = $("#username").val().trim();
-				var password = $("#password").val().trim();
-
-                //TODO Test de la longueur des champs et si remplis ou non pour ensuite avertir l'utilisateur
-				if(username == "" || password == ""){
-					alert('Veuillez remplir les champs');
-				}
-				else{
-					$("#loading_icon").css({"display":"flex"});
-					$.ajax(
-						{
-							url: 'login.php',
-							method : 'POST',
-							data: {
-								login: 1,
-								usernamePHP: username,
-								passwordPHP: password
-							},
-							success: function(response){
-								$("#loading_icon").css({"display":"none"});
-								console.log(response);
-								
-
-								if(response.indexOf('Success') >= 0){
-									window.location = 'garage.php';
-								}
-								else{
-									$("#resultlog").css({"color" : "red"});
-									$("#resultlog").html("Identifiants introuvables");
-								}
-							},
-							dataType: 'text'
-						}
-					)
-				}  
-                */
         </script>
     </body>
     </html>

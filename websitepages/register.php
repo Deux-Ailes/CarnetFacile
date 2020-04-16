@@ -33,12 +33,16 @@ if(isset($_POST['login'])) {
 				if(mysqli_stmt_execute($stmt)){
 					$_SESSION['loggedIN'] = '1';
 					$_SESSION['username'] = $username;
+					$data = $connection->query ("SELECT id FROM users WHERE username='$username'");
+					if($data->num_rows > 0){
+						$row= $data->fetch_assoc();
+						$_SESSION['id']=$row.["id"];
+					}
 					exit("Inscription réussie, vous allez être redirigé dans 3 secondes");
 				} else{
 					exit("ERROR: Could not execute query: $sql. " . mysqli_error($connection));
 				}
-				mysqli_stmt_close($stmt);
-				//mysqli_close($connection);			
+				mysqli_stmt_close($stmt);			
 			}
 		}
 	exit($username . "=" . $password . "=" . $email);
