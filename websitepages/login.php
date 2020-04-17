@@ -15,9 +15,12 @@
 		$data = $connection->query ("SELECT id FROM users WHERE username='$username' AND password='$password'");
 		if($data->num_rows > 0){
 			$_SESSION['loggedIN'] = '1';
-			$_SESSION['username'] = $username;
-			$row= $data->fetch_assoc();
-			$_SESSION['id']=$row.["id"];
+			$_SESSION['username'] = $username;			
+			while ($row = mysqli_fetch_row($data)) {
+				$id = $row[0];
+				$_SESSION["id"]=$id;
+			}
+			
 			exit('Success');
 		}
 		else{

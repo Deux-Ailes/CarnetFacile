@@ -9,9 +9,10 @@
             $connection = new mysqli('localhost','root','', 'site'); 
             if(isset($_SESSION['username'])){
                 $username=$_SESSION['username'];
-                $id = $_SESSION['id'];
-                 //?Récupération des valeurs
-                $type = $_POST['typePHP'];
+                $id=$_SESSION['id'];
+                               
+                //?Récupération des valeurs
+                $type = $connection->real_escape_string($_POST['typePHP']);
                 $marque = $connection->real_escape_string($_POST['marquePHP']);
                 $modele = $connection->real_escape_string($_POST['modelePHP']);            
                 $annee = $_POST['anneePHP'];
@@ -19,10 +20,19 @@
                 $entretien = $_POST['entretienPHP'];
                 $km = $_POST['kmPHP'];
 
-                
+                //?Restructuration des dates afin d'être insérées correctement dans la database et lowercase du type pour homogéinisation des types de véhicules
                 $ctdate = date("Y-m-d", strtotime($ct));
                 $entretiendate = date("Y-m-d", strtotime($entretien));
+                $type = strtolower($type);
 
+                //?Test des valeurs
+                if(preg_match('[^A-Za-z0-9]',$type)) exit("Type non valide");
+                if(preg_match('[^A-Za-z0-9]',$marque)) exit("Marque non valide");
+                if(preg_match('[^A-Za-z0-9]',$modele)) exit("Modèle non valide");
+                if($km<0) exit("Km non valide");
+                
+
+                //! Préparation de l'insertion des données dans la database.
                 $sql = "INSERT INTO vehicules (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 if($stmt= mysqli_prepare($connection, $sql)){
                     mysqli_stmt_bind_param($stmt, "sssdssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
@@ -34,7 +44,6 @@
                     $entretienstmt = $entretiendate;
                     $kmstmt = $km;
                     $idstmt = $id;
-                    exit($id);
 
                     if(mysqli_stmt_execute($stmt)){				
                         exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
@@ -47,7 +56,7 @@
                 }
             
             
-            //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
+                //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
             }
             exit("Erreur dans la préparation du insert");
         }
@@ -502,7 +511,7 @@
                             <div id="annee_vehi">
                                 <label for="annee">Ann&eacute;e du v&eacute;hicule</label>
                                 <br>
-                                <input type="number" id="annee" value="2020">                       
+                                <input type="number" id="annee" min="1920" value="2020">                       
                             </div>
                             
                             <br>
@@ -515,17 +524,17 @@
                             <h3 class="fs-subtitle">Step 3</h3>
                             <label for="km">Kilom&eacute;trage du v&eacute;hicule</label>
                             <br>
-                            <input type="number" id="km" value="0" placeholder="Kilométrage du véhicule" required>
+                            <input type="number" id="km" value="0" min="0" placeholder="Kilométrage du véhicule">
                             <div id="entretien_vehi">
                                 <label for="entretien">Date du dernier entretien</label>
                                 <br>
-                                <input type="date" id="entretien" value="" max="<?php echo date('Y-m-d'); ?>">                        
+                                <input type="date" id="entretien" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">                        
                             </div>
 
                             <div id="ct_vehi">
                                 <label for="ct">Date du dernier Controle technique</label>
                                 <br>
-                                <input type="date" id="ct" value="" max="<?php echo date('Y-m-d'); ?>">                        
+                                <input type="date" id="ct" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">                        
                             </div>
                             
                             <input type="button" name="previous" class="previous action-button" value="Previous" />

@@ -34,9 +34,11 @@ if(isset($_POST['login'])) {
 					$_SESSION['loggedIN'] = '1';
 					$_SESSION['username'] = $username;
 					$data = $connection->query ("SELECT id FROM users WHERE username='$username'");
-					if($data->num_rows > 0){
-						$row= $data->fetch_assoc();
-						$_SESSION['id']=$row.["id"];
+					if($data->num_rows > 0){						
+						while ($row = mysqli_fetch_row($data)) {
+							$id = $row[0];
+							$_SESSION["id"]=$id;
+						}
 					}
 					exit("Inscription réussie, vous allez être redirigé dans 3 secondes");
 				} else{
