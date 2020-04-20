@@ -3,17 +3,17 @@
     if(!isset($_SESSION['loggedIN'])){
         header('Location: login.php');
     }
-    if(isset($_POST['login'])) {
-	  $connection = new mysqli('localhost','root','', 'site');
-	  $id = $_SESSION["id"];
-	  $result= mysqli_query($connection, "SELECT * FROM Vehicules WHERE idUSER='$id'");
-        //! Fin du check de connection de l'user
-    }
 ?>
  <style type="text/css">
+        *{
+          font-family: 'Poppins', sans-serif;
+        }
+        
+        
+        
         :root {
           font-size: 16px;
-          font-family: 'Open Sans';
+          font-family: 'Poppins', sans-serif;
           --text-primary: #b6b6b6;
           --text-secondary: #ececec;
           --bg-primary: #23232e;
@@ -188,10 +188,20 @@
           }
         }
 
-		.display_vehicule{
+		.display_garage{
 			display: flex;
 			justify-content : space-around;
 		}
+    .display_vehicule{
+      border-style: solid;
+      border-width: 3px;
+    }
+    .display_marquemodele{
+      border-style: solid;
+      border-width: 3px;
+      border-radius: 30px;
+      border-color: blue;
+    }
     </style>
 <html>
     <head>
@@ -291,20 +301,32 @@
       	</nav>
 		<main>
 			<div class="display_garage">
-				<?
-					while($row = mysqli_fetch_array($result)){
-				?>
-				<div class='display_vehicule'>
-				<div class='display_marquemodele'>
-				<?= echo $row['MarqueVE']; echo $row['ModeleVE']; ?>
-				</div>	//Fin div marque modele
-				<div class='display_annee'>
-				<?= echo $row['AnneeVE'];	?>
-				</div>	//Fin div annee						
-				</div>	//Fin div vehicule
-				<? 
-					}
-				?>
+      <pre>
+      <?php 
+        $connection = new mysqli('localhost','root','', 'site');
+	      $id = $_SESSION["id"];
+        $result= mysqli_query($connection, "SELECT TypeVE, MarqueVE, ModeleVE, AnneeVE FROM vehicules WHERE idUSER='$id'");
+        
+        while($row = mysqli_fetch_array($result)){
+          echo "<div class='display_vehicule'>";
+          echo "<div class='display_marquemodele'>";
+          echo $row['MarqueVE'] . " " . $row['ModeleVE'];
+          echo "</div>";
+          
+          echo "<div class='display_annee'>";
+          echo $row['AnneeVE'];
+          echo "</div>";
+
+          echo "</div>";
+          echo "<br>";
+        }
+      ?>
+      </pre>
+
+
+
+          
+			
 				
 			</div>
 		</main>
