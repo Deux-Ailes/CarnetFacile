@@ -4,7 +4,6 @@
             header('Location: login.php');
         }
 
-            //TODO Pour bypass ce problème d'ID, effectuer une requête pour l'obtenir dans une autre variable. Moins simple pour la transmission d'infos accros the website mais bien plus simple localement.
         if(isset($_POST['submitted'])){
             $connection = new mysqli('localhost','root','', 'site'); 
             if(isset($_SESSION['username'])){
@@ -25,10 +24,10 @@
                 $entretiendate = date("Y-m-d", strtotime($entretien));
                 $type = strtolower($type);
 
-                //?Test des valeurs
+                //?Test des valeurs avec filtre
                 if(preg_match('[^A-Za-z0-9]',$type)) exit("Type non valide");
                 if(preg_match('[^A-Za-z0-9]',$marque)) exit("Marque non valide");
-                if(preg_match('[^A-Za-z0-9]',$modele)) exit("Modèle non valide");
+                if(preg_match('[^A-Za-z0-9]',$modele)) exit("Modèle non valide"); 
                 if($km<0) exit("Km non valide");
                 
 
