@@ -1,16 +1,8 @@
 <?php
-    session_start();
-    if(!isset($_SESSION['loggedIN'])){
-        header('Location: login.php');
-    }
 
-    if(isset($_POST['transmitted'])){
-      $_SESSION['transmitted'] = $_POST['transmitted'];
-      exit("Ok");
-    }
-    
 ?>
- <style type="text/css">
+
+<style type="text/css">
         *{
           font-family: 'Poppins', sans-serif;
         }
@@ -221,7 +213,9 @@
         flex-direction: column;
       }
     }
-    </style>
+</style>
+
+
 <html>
     <head>
         <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet"> <!-- Main font -->
@@ -317,63 +311,9 @@
 				</a>
 			</li>
 			</ul>
-    </nav>
+      	</nav>
 		<main>
-			<div class="display_garage">
-      <pre>
-      <?php 
-        $connection = new mysqli('localhost','root','', 'site');
-	      $id = $_SESSION["id"];
-        $result= mysqli_query($connection, "SELECT TypeVE, MarqueVE, ModeleVE, AnneeVE FROM vehicules WHERE idUSER='$id'");
-        $numvehi= 0 ; //Compte le nombre de véhicule, en partant de 0
-        while($row = mysqli_fetch_array($result)){
-          
-          echo "<div class='display_vehicule' id='" . $numvehi ."' onclick='clickediv(" . $numvehi . ")' " . "style='cursor: pointer;'>";
-          echo "<div class='display_marquemodele'>";
-          echo $row['MarqueVE'] . " " . $row['ModeleVE'];
-          echo "</div>";
-          
-          echo "<div class='display_annee'>";
-          echo $row['AnneeVE'];
-          echo "</div>";
-
-          echo "</div>";
-          
-          $numvehi=$numvehi+1;
-        }
-      ?>
-      </pre>
-
-      <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
-	    <script type="text/javascript">
-        function clickediv(id){
-          if(id === undefined){}
-          else{
-            $.ajax(
-                  {
-                  url: 'garage.php',
-                  method : 'POST',
-                  data: {
-                    transmitted: 1,
-                    idPHP: id,
-                  },
-                  success: function(response){
-									console.log(response);
-									if(response.indexOf('Ok') >=0){										
-										window.location ='vehicule.php';
-									}
-								},
-                  dataType: 'text'
-                }
-              )
-            }
-        } //!Fin de la fonction de redirection
-      </script>
-
-          
-			
-				
-			</div>
-		</main>
+            
+        </main>
     </body>
 </html>

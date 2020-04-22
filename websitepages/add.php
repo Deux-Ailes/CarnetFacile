@@ -59,10 +59,6 @@
             }
             exit("Erreur dans la préparation du insert");
         }
-
-
-        //$query_date = "INSERT INTO tablename (col_name, col_date) VALUES ('DATE: Manual Date', '2008-7-04')”
-
     ?>
     <style type="text/css">
         :root {
