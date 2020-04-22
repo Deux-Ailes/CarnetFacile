@@ -5,7 +5,7 @@
     }
 
     if(isset($_POST['transmitted'])){
-      $_SESSION['transmitted'] = $_POST['transmitted'];
+      $_SESSION['idvehi'] = $_POST['idPHP'];
       exit("Ok");
     }
     
@@ -199,7 +199,6 @@
 			display: inline-flex;
       background: grey;
       box-sizing: border-box;
-      flex-direction: row;
 			
 		}
     .display_vehicule{
@@ -233,7 +232,7 @@
       	<nav class="navbar">
 			<ul class="navbar-nav">
 			<li class="logo">
-				<a href="#" class="nav-link">
+				<a href="garage.php" class="nav-link">
 				<span class="link-text logo-text">Garage</span>
 				<svg
 					aria-hidden="true"
@@ -313,14 +312,14 @@
 					</span>
 					</g>
 				</svg>
-				<span class="link-text">Th&ecirc;me sombre</span>
+				<span class="link-text">Th&egrave;me<br>sombre</span>
 				</a>
 			</li>
 			</ul>
     </nav>
 		<main>
 			<div class="display_garage">
-      <pre>
+     
       <?php 
         $connection = new mysqli('localhost','root','', 'site');
 	      $id = $_SESSION["id"];
@@ -342,7 +341,7 @@
           $numvehi=$numvehi+1;
         }
       ?>
-      </pre>
+      
 
       <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
 	    <script type="text/javascript">

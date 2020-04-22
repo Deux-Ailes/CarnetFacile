@@ -379,7 +379,7 @@
             <nav class="navbar">
                 <ul class="navbar-nav">
                 <li class="logo">
-                    <a href="#" class="nav-link">
+                    <a href="garage.php" class="nav-link">
                     <span class="link-text logo-text">Garage</span>
                     <svg
                         aria-hidden="true"
@@ -459,7 +459,7 @@
                         </span>
                         </g>
                     </svg>
-                    <span class="link-text">Th&ecirc;me sombre</span>
+                    <span class="link-text">Th&egrave;me sombre</span>
                     </a>
                 </li>
                 </ul>

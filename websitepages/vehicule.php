@@ -1,5 +1,5 @@
 <?php
-
+    $_SESSION['idvehi']
 ?>
 
 <style type="text/css">
@@ -214,8 +214,6 @@
       }
     }
 </style>
-
-
 <html>
     <head>
         <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet"> <!-- Main font -->
@@ -227,7 +225,7 @@
       	<nav class="navbar">
 			<ul class="navbar-nav">
 			<li class="logo">
-				<a href="#" class="nav-link">
+				<a href="garage.php" class="nav-link">
 				<span class="link-text logo-text">Garage</span>
 				<svg
 					aria-hidden="true"
@@ -307,13 +305,13 @@
 					</span>
 					</g>
 				</svg>
-				<span class="link-text">Th&ecirc;me sombre</span>
+				<span class="link-text">Th&egrave;me<br>sombre</span>
 				</a>
 			</li>
 			</ul>
       	</nav>
 		<main>
-            
+
         </main>
     </body>
 </html>
