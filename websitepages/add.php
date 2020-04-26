@@ -1,64 +1,63 @@
-    <?php 
-        session_start();
-        if(!isset($_SESSION['loggedIN'])){
-            header('Location: login.php');
-        }
+    <?php
+    session_start();
+    if (!isset($_SESSION['loggedIN'])) {
+        header('Location: login.php');
+    }
 
-        if(isset($_POST['submitted'])){
-            $connection = new mysqli('localhost','root','', 'site'); 
-            if(isset($_SESSION['username'])){
-                $username=$_SESSION['username'];
-                $id=$_SESSION['id'];
-                               
-                //?Récupération des valeurs
-                $type = $connection->real_escape_string($_POST['typePHP']);
-                $marque = $connection->real_escape_string($_POST['marquePHP']);
-                $modele = $connection->real_escape_string($_POST['modelePHP']);            
-                $annee = $_POST['anneePHP'];
-                $ct = $_POST['ctPHP'];
-                $entretien = $_POST['entretienPHP'];
-                $km = $_POST['kmPHP'];
+    if (isset($_POST['submitted'])) {
+        $connection = new mysqli('localhost', 'root', '', 'site');
+        if (isset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+            $id = $_SESSION['id'];
 
-                //?Restructuration des dates afin d'être insérées correctement dans la database et lowercase du type pour homogéinisation des types de véhicules
-                $ctdate = date("Y-m-d", strtotime($ct));
-                $entretiendate = date("Y-m-d", strtotime($entretien));
-                $type = strtolower($type);
+            //?Récupération des valeurs
+            $type = $connection->real_escape_string($_POST['typePHP']);
+            $marque = $connection->real_escape_string($_POST['marquePHP']);
+            $modele = $connection->real_escape_string($_POST['modelePHP']);
+            $annee = $_POST['anneePHP'];
+            $ct = $_POST['ctPHP'];
+            $entretien = $_POST['entretienPHP'];
+            $km = $_POST['kmPHP'];
 
-                //?Test des valeurs avec filtre
-                if(preg_match('[^A-Za-z0-9]',$type)) exit("Type non valide");
-                if(preg_match('[^A-Za-z0-9]',$marque)) exit("Marque non valide");
-                if(preg_match('[^A-Za-z0-9]',$modele)) exit("Modèle non valide"); 
-                if($km<0) exit("Km non valide");
-                
+            //?Restructuration des dates afin d'être insérées correctement dans la database et lowercase du type pour homogéinisation des types de véhicules
+            $ctdate = date("Y-m-d", strtotime($ct));
+            $entretiendate = date("Y-m-d", strtotime($entretien));
+            $type = strtolower($type);
 
-                //! Préparation de l'insertion des données dans la database.
-                $sql = "INSERT INTO vehicules (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                if($stmt= mysqli_prepare($connection, $sql)){
-                    mysqli_stmt_bind_param($stmt, "sssdssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
-                    $typestmt = $type;
-                    $marquestmt = $marque;
-                    $modelestmt = $modele;
-                    $anneestmt = $annee;
-                    $ctstmt = $ctdate;
-                    $entretienstmt = $entretiendate;
-                    $kmstmt = $km;
-                    $idstmt = $id;
+            //?Test des valeurs avec filtre
+            if (preg_match('[^A-Za-z0-9]', $type)) exit("Type non valide");
+            if (preg_match('[^A-Za-z0-9]', $marque)) exit("Marque non valide");
+            if (preg_match('[^A-Za-z0-9]', $modele)) exit("Modèle non valide");
+            if ($km < 0) exit("Km non valide");
 
-                    if(mysqli_stmt_execute($stmt)){				
-                        exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
-                    }
 
-                    exit("On est arrivé au bout, c'est déjà bien, mais ça a bugué");
+            //! Préparation de l'insertion des données dans la database.
+            $sql = "INSERT INTO vehicules (TypeVE,MarqueVE,ModeleVE,AnneeVE,DateCTVE,DateEntretienVE,KilometresVE,idUSER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            if ($stmt = mysqli_prepare($connection, $sql)) {
+                mysqli_stmt_bind_param($stmt, "sssdssdd", $typestmt, $marquestmt, $modelestmt, $anneestmt, $ctstmt, $entretienstmt, $kmstmt, $idstmt);
+                $typestmt = $type;
+                $marquestmt = $marque;
+                $modelestmt = $modele;
+                $anneestmt = $annee;
+                $ctstmt = $ctdate;
+                $entretienstmt = $entretiendate;
+                $kmstmt = $km;
+                $idstmt = $id;
+
+                if (mysqli_stmt_execute($stmt)) {
+                    exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
                 }
-                else{
-                    exit("Erreur d'username les bros");
-                }
-            
-            
-                //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
+
+                exit("On est arrivé au bout, c'est déjà bien, mais ça a bugué");
+            } else {
+                exit("Erreur d'username les bros");
             }
-            exit("Erreur dans la préparation du insert");
+
+
+            //!FIN DE LA CONNEXION & TEST SOUMISSION DU FORM
         }
+        exit("Erreur dans la préparation du insert");
+    }
     ?>
     <style type="text/css">
         :root {
@@ -143,12 +142,12 @@
         }
 
         .fa-secondary {
-                color: #00688B;
+            color: #00688B;
         }
 
         .fa-primary,
         .fa-secondary {
-                transition: var(--transition-speed);
+            transition: var(--transition-speed);
         }
 
         .logo {
@@ -161,14 +160,14 @@
             font-size: 1.5rem;
             letter-spacing: 0.3ch;
             width: 100%;
-         }
+        }
 
         .logo svg {
             transform: rotate(0deg);
             transition: var(--transition-speed);
         }
 
-        .logo-text{
+        .logo-text {
             display: inline;
             position: absolute;
             left: -999px;
@@ -179,11 +178,11 @@
             transform: rotate(-180deg);
         }
 
-        .fa-stack{
-            margin-left:1.25rem;
+        .fa-stack {
+            margin-left: 1.25rem;
         }
 
-            /* Small screens */
+        /* Small screens */
         @media only screen and (max-width: 600px) {
             .navbar {
                 bottom: 0;
@@ -191,14 +190,15 @@
                 height: 5rem;
             }
 
-            .logo{
-                display:none;
+            .logo {
+                display: none;
             }
-            
-            .fa-stack{
-                margin-left:auto;
-                margin-right:auto;
+
+            .fa-stack {
+                margin-left: auto;
+                margin-right: auto;
             }
+
             .navbar-nav {
                 flex-direction: row;
             }
@@ -212,7 +212,7 @@
             }
         }
 
-            /* Large screens */
+        /* Large screens */
         @media only screen and (min-width: 600px) {
             .navbar {
                 top: 0;
@@ -228,254 +228,242 @@
                 display: inline;
             }
 
-            .navbar:hover .logo svg
-            {
+            .navbar:hover .logo svg {
                 margin-left: 11rem;
             }
 
-            .navbar:hover .logo-text
-            {
+            .navbar:hover .logo-text {
                 left: 0px;
             }
         }
 
-            
-        #Formulaire{
-              width: 60vw;
-              height: 60vh;
-              display: block;
-              left: 0px;
-              border-radius: 3px;
-              border-color: black;
+
+        #Formulaire {
+            width: 60vw;
+            height: 60vh;
+            display: block;
+            left: 0px;
+            border-radius: 3px;
+            border-color: black;
         }
 
-        #Form_Vehi{
-                width: 600px;
-                margin: 50px auto;                
-                position: relative;
-                font-family: 'Poppins', sans-serif;
+        #Form_Vehi {
+            width: 600px;
+            margin: 50px auto;
+            position: relative;
+            font-family: 'Poppins', sans-serif;
         }
 
-        #Form_Vehi fieldset{
-                background: white;
-                border: 0 none;
-                border-radius: 3px;
-                padding: 20px 30px;
-                box-sizing: border-box;
-                width: 60vw;
-                margin: 0 10%;
-                
-                /* Pour pouvoir les stacks les uns sur les autres*/
-                position: relative;
-        }
-                /* Pour cacher les fieldsets sauf le premier*/
-        #Form_Vehi fieldset:not(:first-of-type){
-                display: none;
+        #Form_Vehi fieldset {
+            background: white;
+            border: 0 none;
+            border-radius: 3px;
+            padding: 20px 30px;
+            box-sizing: border-box;
+            width: 60vw;
+            margin: 0 10%;
+
+            /* Pour pouvoir les stacks les uns sur les autres*/
+            position: relative;
         }
 
-        #d_Fieldset{
-                text-align: left;
-                padding: 1rem; 
+        /* Pour cacher les fieldsets sauf le premier*/
+        #Form_Vehi fieldset:not(:first-of-type) {
+            display: none;
+        }
+
+        #d_Fieldset {
+            text-align: left;
+            padding: 1rem;
         }
 
 
-            /* Inputs */
+        /* Inputs */
 
-        #Form_Vehi input{
-                padding: 1rem;
-                border: 1px solid #ccc;  
-                border-radius: 3px;
-                margin-bottom: 10px;
+        #Form_Vehi input {
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
         }
 
-        #Form_Vehi #Replaced_Autre{
-                display: none;
-                text-align: center;
+        #Form_Vehi #Replaced_Autre {
+            display: none;
+            text-align: center;
         }
 
-        #Form_Vehi .action-button{
-                width: 100px;
-                background: blue;
-                font-weight: bold;
-                color: white;
-                border: 0 none;
-                border-radius: 1px;
-                padding: 10px 5px;
-                margin: 10px 5px;
+        #Form_Vehi .action-button {
+            width: 100px;
+            background: blue;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 1px;
+            padding: 10px 5px;
+            margin: 10px 5px;
         }
 
-        #Form_Vehi .action-button:hover, #Form_Vehi .action-button:focus{
-               box-shadow: 0 0 0 2px white, 0 0 0 3px silver; 
+        #Form_Vehi .action-button:hover,
+        #Form_Vehi .action-button:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px silver;
         }
 
-        .fs-title{
-                font-size: 15px;
-                text-transform: uppercase;
-                margin-bottom: 0.8rem;
+        .fs-title {
+            font-size: 15px;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
         }
 
-        .fs-subtitle{
-                font-weight: normal;
-                margin-bottom: 20px;
+        .fs-subtitle {
+            font-weight: normal;
+            margin-bottom: 20px;
         }
 
         #progressbar {
-                text-align: center;
-                margin-bottom: 30px;
-                overflow: hidden;
-                /*CSS counters to number the steps*/
-                counter-reset: step;
-        }
-            
-        #progressbar li {
-                list-style-type: none;
-                color: black;
-                text-transform: uppercase;
-                font-size: 12px;
-                width: 33.33%;
-                float: left;
-                position: relative;
-        }
-        
-        #progressbar li:before {
-                content: counter(step);
-                counter-increment: step;
-                width: 20px;
-                line-height: 20px;
-                display: block;
-                font-size: 10px;
-                color: #333;
-                background: grey;
-                border-radius: 3px;
-                margin: 0 auto 5px auto;
-        }
-            /*progressbar connectors*/
-        #progressbar li:after {
-                content: '';
-                width: 100%;
-                height: 2px;
-                background: black;
-                position: absolute;
-                left: -50%;
-                top: 9px;
-                z-index: -1; 
-        }
-        #progressbar li:first-child:after {
-            content: none; 
+            text-align: center;
+            margin-bottom: 30px;
+            overflow: hidden;
+            /*CSS counters to number the steps*/
+            counter-reset: step;
         }
 
-        #progressbar li.active:before,  #progressbar li.active:after{
+        #progressbar li {
+            list-style-type: none;
+            color: black;
+            text-transform: uppercase;
+            font-size: 12px;
+            width: 33.33%;
+            float: left;
+            position: relative;
+        }
+
+        #progressbar li:before {
+            content: counter(step);
+            counter-increment: step;
+            width: 20px;
+            line-height: 20px;
+            display: block;
+            font-size: 10px;
+            color: #333;
+            background: grey;
+            border-radius: 3px;
+            margin: 0 auto 5px auto;
+        }
+
+        /*progressbar connectors*/
+        #progressbar li:after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            background: black;
+            position: absolute;
+            left: -50%;
+            top: 9px;
+            z-index: -1;
+        }
+
+        #progressbar li:first-child:after {
+            content: none;
+        }
+
+        #progressbar li.active:before,
+        #progressbar li.active:after {
             background: #27AE60;
             color: white;
         }
     </style>
     <html>
-        <head>
-        
-            <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet"> <!-- Main font -->
-            <script src="https://kit.fontawesome.com/a81368914c.js"></script> <!-- Get the different set of icons -->
-        </head>
-        <body>
-            <nav class="navbar">
-                <ul class="navbar-nav">
+
+    <head>
+
+        <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet"> <!-- Main font -->
+        <script src="https://kit.fontawesome.com/a81368914c.js"></script> <!-- Get the different set of icons -->
+    </head>
+
+    <body>
+        <nav class="navbar">
+            <ul class="navbar-nav">
                 <li class="logo">
                     <a href="garage.php" class="nav-link">
-                    <span class="link-text logo-text">Garage</span>
-                    <svg
-                        aria-hidden="true"
-                        focusable="false"
-                        data-prefix="fad"
-                        data-icon="angle-double-right"
-                        role="img"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 448 512"
-                        class="svg-inline--fa fa-angle-double-right fa-w-14 fa-5x"
-                    >
-                        <g class="fa-group">
-                        <path
-                            fill="currentColor"
-                            d="M224 273L88.37 409a23.78 23.78 0 0 1-33.8 0L32 386.36a23.94 23.94 0 0 1 0-33.89l96.13-96.37L32 159.73a23.94 23.94 0 0 1 0-33.89l22.44-22.79a23.78 23.78 0 0 1 33.8 0L223.88 239a23.94 23.94 0 0 1 .1 34z"
-                            class="fa-secondary"
-                        ></path>
-                        <path
-                            fill="currentColor"
-                            d="M415.89 273L280.34 409a23.77 23.77 0 0 1-33.79 0L224 386.26a23.94 23.94 0 0 1 0-33.89L320.11 256l-96-96.47a23.94 23.94 0 0 1 0-33.89l22.52-22.59a23.77 23.77 0 0 1 33.79 0L416 239a24 24 0 0 1-.11 34z"
-                            class="fa-primary"
-                        ></path>
-                        </g>
-                    </svg>
+                        <span class="link-text logo-text">Garage</span>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fad" data-icon="angle-double-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-angle-double-right fa-w-14 fa-5x">
+                            <g class="fa-group">
+                                <path fill="currentColor" d="M224 273L88.37 409a23.78 23.78 0 0 1-33.8 0L32 386.36a23.94 23.94 0 0 1 0-33.89l96.13-96.37L32 159.73a23.94 23.94 0 0 1 0-33.89l22.44-22.79a23.78 23.78 0 0 1 33.8 0L223.88 239a23.94 23.94 0 0 1 .1 34z" class="fa-secondary"></path>
+                                <path fill="currentColor" d="M415.89 273L280.34 409a23.77 23.77 0 0 1-33.79 0L224 386.26a23.94 23.94 0 0 1 0-33.89L320.11 256l-96-96.47a23.94 23.94 0 0 1 0-33.89l22.52-22.59a23.77 23.77 0 0 1 33.79 0L416 239a24 24 0 0 1-.11 34z" class="fa-primary"></path>
+                            </g>
+                        </svg>
                     </a>
                 </li>
-            
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <g class="fa-group">
-                        <span  class="fa-stack">
-                        <div fill="currentColor" class="fa-primary">
-                            <i class="fas fa-plus fa-stack-2x"></i>               
-                            </div>
-                            
-                        </span>
+                            <span class="fa-stack">
+                                <div fill="currentColor" class="fa-primary">
+                                    <i class="fas fa-plus fa-stack-2x"></i>
+                                </div>
+
+                            </span>
                         </g>
-                    <span class="link-text">Ajout</span>
+                        <span class="link-text">Ajout</span>
                     </a>
                 </li>
-            
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <g class="fa-group">
-                        <span  class="fa-stack">
-                            <div fill="currentColor" class="fa-primary">
-                            <i class="fas fa-user fa-stack-2x"></i>               
-                            </div>
-                        </span>
+                            <span class="fa-stack">
+                                <div fill="currentColor" class="fa-primary">
+                                    <i class="fas fa-user fa-stack-2x"></i>
+                                </div>
+                            </span>
                         </g>
-                    </svg>
-                    <span class="link-text">Compte</span>
+                        </svg>
+                        <span class="link-text">Compte</span>
                     </a>
                 </li>
-            
+
                 <li class="nav-item">
                     <a href="../WebsitePages/logout.php" class="nav-link">
                         <g class="fa-group">
-                        <span  class="fa-stack">
-                            <div fill="currentColor" class="fa-primary">
-                            <i class="fas fa-sign-out-alt fa-stack-2x"></i>
-                            </div>
-                        </span>
+                            <span class="fa-stack">
+                                <div fill="currentColor" class="fa-primary">
+                                    <i class="fas fa-sign-out-alt fa-stack-2x"></i>
+                                </div>
+                            </span>
                         </g>
-                    
-                    <span class="link-text">D&eacute;connexion</span>
+
+                        <span class="link-text">D&eacute;connexion</span>
                     </a>
                 </li>
-            
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <g class="fa-group">
-                        <span  class="fa-stack">
-                            <div fill="currentColor" class="fa-primary">
-                            <i class="fas fa-moon fa-stack-2x"></i>
-                            </div>
-                        </span>
+                            <span class="fa-stack">
+                                <div fill="currentColor" class="fa-primary">
+                                    <i class="fas fa-moon fa-stack-2x"></i>
+                                </div>
+                            </span>
                         </g>
-                    </svg>
-                    <span class="link-text">Th&egrave;me sombre</span>
+                        </svg>
+                        <span class="link-text">Th&egrave;me sombre</span>
                     </a>
                 </li>
-                </ul>
-            </nav>
-            <main>
-                <div id="Formulaire">
-                    <form id="Form_Vehi">
-                        <!--Grid -->
+            </ul>
+        </nav>
+        <main>
+            <div id="Formulaire">
+                <form id="Form_Vehi">
+                    <!--Grid -->
 
-                        <!--ProgressBar -->
-                        <ul id="progressbar">
-                            <li class="active" class="progbar">G&eacute;n&eacute;ral</li>
-                            <li class="progbar">Informations primordiales</li>
-                            <li class="progbar">Informations secondaires</li>
-                        </ul>
-                        <div id="d_Fieldset">
+                    <!--ProgressBar -->
+                    <ul id="progressbar">
+                        <li class="active" class="progbar">G&eacute;n&eacute;ral</li>
+                        <li class="progbar">Informations primordiales</li>
+                        <li class="progbar">Informations secondaires</li>
+                    </ul>
+                    <div id="d_Fieldset">
                         <!--Fieldsets-->
                         <fieldset>
                             <h2 class="fs-title">Type de v&eacute;hicule</h2>
@@ -494,7 +482,7 @@
                             </div>
                             <input type="text" id="Replaced_Autre" placeholder="Quel type de v&eacute;hicule?">
                             <input type="button" name="Suivant" class="next action-button" value="Next" />
-                        </fieldset>                    
+                        </fieldset>
                         <fieldset>
                             <h2 class="fs-title">Informations g&eacute;n&eacute;rales</h2>
                             <h3 class="fs-subtitle">Step 2</h3>
@@ -506,9 +494,9 @@
                             <div id="annee_vehi">
                                 <label for="annee">Ann&eacute;e du v&eacute;hicule</label>
                                 <br>
-                                <input type="number" id="annee" min="1920" value="2020">                       
+                                <input type="number" id="annee" min="1920" value="2020">
                             </div>
-                            
+
                             <br>
                             <input type="button" name="previous" class="previous action-button" value="Previous" />
                             <input type="button" name="Suivant" class="next action-button" value="Next" />
@@ -523,211 +511,230 @@
                             <div id="entretien_vehi">
                                 <label for="entretien">Date du dernier entretien</label>
                                 <br>
-                                <input type="date" id="entretien" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">                        
+                                <input type="date" id="entretien" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">
                             </div>
 
                             <div id="ct_vehi">
                                 <label for="ct">Date du dernier Controle technique</label>
                                 <br>
-                                <input type="date" id="ct" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">                        
+                                <input type="date" id="ct" value="" min="1920-01-01" max="<?php echo date('Y-m-d'); ?>">
                             </div>
-                            
+
                             <input type="button" name="previous" class="previous action-button" value="Previous" />
                             <input type="button" class="submit action-button" value="Enregistrer" id="submit">
                         </fieldset>
                         <p id="resultlog"></p>
-                        </div>
-                    </form>
-                </div>
-            </main>
-            
-            <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
-            <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-            <script type="text/javascript">
-                var current_fs, next_fs, previous_fs; //Setup des fieldsets
-                var left, opacity, scale; //propriétés qui vont être animées
-                var animating; //Flag pour éviter que l'utilisateur ne puisse glitch en faisant de multiples clicks rapides
-                var index_fs=0;
-                // ! Code non optimal mais permet de gérer l'affichage d'un textField.
-                // ! Sa valeur sera analysée par la suite selon l'état du radiobutton avec la fonction .checked qui renvoit 0 si non coché et 1 si coché.
-                $("#Autre").on('click',function(){
-                        $("#Replaced_Autre").css({"display" : "block"});
-                })
+                    </div>
+                </form>
+            </div>
+        </main>
 
-                $("#Moto").on('click',function(){
-                        $("#Replaced_Autre").css({"display" : "none"});
-                })
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            var current_fs, next_fs, previous_fs; //Setup des fieldsets
+            var left, opacity, scale; //propriétés qui vont être animées
+            var animating; //Flag pour éviter que l'utilisateur ne puisse glitch en faisant de multiples clicks rapides
+            var index_fs = 0;
+            // ! Code non optimal mais permet de gérer l'affichage d'un textField.
+            // ! Sa valeur sera analysée par la suite selon l'état du radiobutton avec la fonction .checked qui renvoit 0 si non coché et 1 si coché.
+            $("#Autre").on('click', function() {
+                $("#Replaced_Autre").css({
+                    "display": "block"
+                });
+            })
 
-                $("#Voiture").on('click',function(){
-                        $("#Replaced_Autre").css({"display" : "none"});
-                }) 
+            $("#Moto").on('click', function() {
+                $("#Replaced_Autre").css({
+                    "display": "none"
+                });
+            })
 
-                $(".next").click(function(){
-                    if(animating){
-                        return false;
-                        
-                    }
-                    animating=true;
-                    current_fs=$(this).parent();
-                    next_fs=$(this).parent().next();
-                    index_fs=index_fs+1;
-                    $(".progbar").eq(index_fs-1).addClass("active");
-                    //$("progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                    next_fs.show();
-                    //On cache le fieldsetactuel
-                    current_fs.animate({opacity: 0}, {step: function(now, mx){
-                            //L'opacité du fieldset actuel descend à 0 -> Stocké dans "now"
-                            //On va réduire au fur et a mesure l'opacity du fieldset actuel et augmenter celle du futur au fur et à mesure
-                            scale = 1 - (1-now)*0.2;
-                            left= (now * 50)+"%";
-                            opacity=1-now;
-                            current_fs.css({
-                                'transform':'scale('+scale+')',
-                                'position': 'absolute'
-                            });
-                            next_fs.css({'left':left, 'opacity': opacity});
-                        },
-                        duration: 800,
-                        complete: function(){
+            $("#Voiture").on('click', function() {
+                $("#Replaced_Autre").css({
+                    "display": "none"
+                });
+            })
+
+            $(".next").click(function() {
+                if (animating) {
+                    return false;
+
+                }
+                animating = true;
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+                index_fs = index_fs + 1;
+                $(".progbar").eq(index_fs - 1).addClass("active");
+                //$("progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                next_fs.show();
+                //On cache le fieldsetactuel
+                current_fs.animate({
+                    opacity: 0
+                }, {
+                    step: function(now, mx) {
+                        //L'opacité du fieldset actuel descend à 0 -> Stocké dans "now"
+                        //On va réduire au fur et a mesure l'opacity du fieldset actuel et augmenter celle du futur au fur et à mesure
+                        scale = 1 - (1 - now) * 0.2;
+                        left = (now * 50) + "%";
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'transform': 'scale(' + scale + ')',
+                            'position': 'absolute'
+                        });
+                        next_fs.css({
+                            'left': left,
+                            'opacity': opacity
+                        });
+                    },
+                    duration: 800,
+                    complete: function() {
                         current_fs.hide();
-                        animating=false;
-                        },
+                        animating = false;
+                    },
 
-                        easing: 'easeInOutBack'
-                    });
-
-
-                });
-                $(".previous").click(function(){
-                    if(animating) return false; 
-                    $(".progbar").eq(index_fs-1).removeClass("active");
-                    index_fs=index_fs-1;
-                    animating = true;            
-                    current_fs = $(this).parent();
-                    previous_fs = $(this).parent().prev();
-                
-                    //$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-                    previous_fs.show(); 
-                    current_fs.animate({opacity: 0}, {
-                        step: function(now, mx) {
-                            scale = 0.8 + (1 - now) * 0.2;
-                            left = ((1-now) * 50)+"%";
-                            opacity = 1 - now;
-                            current_fs.css({'left': left});
-                            previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
-                        }, 
-                        duration: 800, 
-                        complete: function(){
-                            current_fs.hide();
-                            animating = false;
-                        }, 
-                        easing: 'easeInOutBack'
-                    });
+                    easing: 'easeInOutBack'
                 });
 
-                //TODO Effectuer une fonction qui permet d'initialiser un bool pour savoir si la personne a cliqué sur la date. Faire un onClick
-                //TODO afin de pouvoir ensuite dire si oui ou non la date a été modifiée. (et comparer également à un blank pour les champs optionnels).
-                //TODO Penser à mettre les required sur les champs
-                
-                //Création de toutes les variables qui seront à remplir pour l'envoi du formulaire avec Ajax
-                var type, marque, modele, annee, ct, entretien, km;
-                var error=0, msg_error; //!Sert pour annoncer qu'une erreur s'est produite dans la phase de checking des valeurs
-                $(document).ready(function(){
-                
-                    console.log('page ready');
-                    $("#submit").on('click',function(){
 
-                        //? Test Step 1
-                            //var rb_voiture = document.getElementById("voiture").checked;
-                            //var rb_moto = document.getElementById("moto").checked;
-                            //var rb_autre = document.getElementById("autre").checked;
+            });
+            $(".previous").click(function() {
+                if (animating) return false;
+                $(".progbar").eq(index_fs - 1).removeClass("active");
+                index_fs = index_fs - 1;
+                animating = true;
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
 
-                            if(document.getElementById("Voiture").checked){
-                                type="voiture";
-                            }
+                //$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+                previous_fs.show();
+                current_fs.animate({
+                    opacity: 0
+                }, {
+                    step: function(now, mx) {
+                        scale = 0.8 + (1 - now) * 0.2;
+                        left = ((1 - now) * 50) + "%";
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'left': left
+                        });
+                        previous_fs.css({
+                            'transform': 'scale(' + scale + ')',
+                            'opacity': opacity
+                        });
+                    },
+                    duration: 800,
+                    complete: function() {
+                        current_fs.hide();
+                        animating = false;
+                    },
+                    easing: 'easeInOutBack'
+                });
+            });
 
-                            if(document.getElementById("Moto").checked){
-                                type="moto";
-                            }
+            //TODO Effectuer une fonction qui permet d'initialiser un bool pour savoir si la personne a cliqué sur la date. Faire un onClick
+            //TODO afin de pouvoir ensuite dire si oui ou non la date a été modifiée. (et comparer également à un blank pour les champs optionnels).
+            //TODO Penser à mettre les required sur les champs
 
-                            if(document.getElementById("Autre").checked){
-                                if((type=$("#Replaced_Autre").val().trim())== ""){
-                                    msg_error= "Vous n'avez pas rempli le champ du type de véhicule correctement.";
-                                    error=1;
-                                }
-                            }
+            //Création de toutes les variables qui seront à remplir pour l'envoi du formulaire avec Ajax
+            var type, marque, modele, annee, ct, entretien, km;
+            var error = 0,
+                msg_error; //!Sert pour annoncer qu'une erreur s'est produite dans la phase de checking des valeurs
+            $(document).ready(function() {
 
-                        //? Test Step 2
-                            if((marque = $("#marque").val().trim())==""){
-                                msg_error = msg_error+ "\n" + "Vous n'avez pas renseigné de marque.";
-                                error=1;
-                            }
+                console.log('page ready');
+                $("#submit").on('click', function() {
 
-                            if((modele = $("#modele").val().trim())==""){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de modèle.";
-                                error=1;
-                            }
-                            
-                            //? Alternative pour obtenir la variable : var dateControl = document.querySelector("div#annee_vehi input[type='date']");                    
-                            if((annee = ($("#annee").val().trim()))==""){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné d'année valide.";
-                                error=1;
-                            }
-                            anneenum = parseInt(annee, 10);
-                            
-                            console.log(anneenum);
-                        //? Test Step 3
+                    //? Test Step 1
+                    //var rb_voiture = document.getElementById("voiture").checked;
+                    //var rb_moto = document.getElementById("moto").checked;
+                    //var rb_autre = document.getElementById("autre").checked;
 
-                            if((km= $("#km").val())=="0"){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné un kilométrage valide.";
-                                error=1;
-                            }
+                    if (document.getElementById("Voiture").checked) {
+                        type = "voiture";
+                    }
 
-                            if((ct = $("#ct").val())==""){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date de contrôle technique valide.";
-                                error=1;
-                            }
-                        
-                            if((entretien = $("#entretien").val())==""){
-                                msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date d'entretien valide.";
-                                error=1;
-                            }
-                            
-                            //?Début de la grosse partie avec Ajax
-                            if(error==0)
-                            {
-                                $.ajax(
-                                    {
-                                    url: 'add.php',
-                                    method : 'POST',
-                                    data: {
-                                        submitted: 1,
-                                        typePHP: type, 
-                                        marquePHP: marque,
-                                        modelePHP: modele, 
-                                        anneePHP: anneenum, 
-                                        ctPHP: ct, 
-                                        entretienPHP: entretien, 
-                                        kmPHP: entretien
-                                    },
-                                    success: function(response){
-                                        $("#loading_icon").css({"display":"none"});
-                                        console.log(response);
-                                        
-                                        //?Plein de stuff là dedans
-                                        $("#resultlog").html(response);
-                                    },
-                                    dataType: 'text'
-                                    }
-                                )
-                                        
-                            }
+                    if (document.getElementById("Moto").checked) {
+                        type = "moto";
+                    }
 
-                        //!FIN DU SUBMIT
-                    })
+                    if (document.getElementById("Autre").checked) {
+                        if ((type = $("#Replaced_Autre").val().trim()) == "") {
+                            msg_error = "Vous n'avez pas rempli le champ du type de véhicule correctement.";
+                            error = 1;
+                        }
+                    }
 
+                    //? Test Step 2
+                    if ((marque = $("#marque").val().trim()) == "") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de marque.";
+                        error = 1;
+                    }
+
+                    if ((modele = $("#modele").val().trim()) == "") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de modèle.";
+                        error = 1;
+                    }
+
+                    //? Alternative pour obtenir la variable : var dateControl = document.querySelector("div#annee_vehi input[type='date']");                    
+                    if ((annee = ($("#annee").val().trim())) == "") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné d'année valide.";
+                        error = 1;
+                    }
+                    anneenum = parseInt(annee, 10);
+
+                    console.log(anneenum);
+                    //? Test Step 3
+
+                    if ((km = $("#km").val()) == "0") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné un kilométrage valide.";
+                        error = 1;
+                    }
+                    km = parseInt(km, 10);
+
+                    if ((ct = $("#ct").val()) == "") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date de contrôle technique valide.";
+                        error = 1;
+                    }
+
+                    if ((entretien = $("#entretien").val()) == "") {
+                        msg_error = msg_error + "\n" + "Vous n'avez pas renseigné de date d'entretien valide.";
+                        error = 1;
+                    }
+
+                    //?Début de la grosse partie avec Ajax
+                    if (error == 0) {
+                        $.ajax({
+                            url: 'add.php',
+                            method: 'POST',
+                            data: {
+                                submitted: 1,
+                                typePHP: type,
+                                marquePHP: marque,
+                                modelePHP: modele,
+                                anneePHP: anneenum,
+                                ctPHP: ct,
+                                entretienPHP: entretien,
+                                kmPHP: km
+                            },
+                            success: function(response) {
+
+                                console.log(response);
+
+                                //?Plein de stuff là dedans
+                                $("#resultlog").html(response);
+                            },
+                            dataType: 'text'
+                        })
+
+                    }
+
+                    //!FIN DU SUBMIT
                 })
-            </script>
-        </body>
+
+            })
+        </script>
+    </body>
+
     </html>
