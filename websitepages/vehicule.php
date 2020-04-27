@@ -380,6 +380,10 @@ if (isset($_POST['modified'])) {
     display: none;
     width: 400px;
   }
+
+  fieldset {
+    border: none;
+  }
 </style>
 <html>
 
@@ -463,64 +467,114 @@ if (isset($_POST['modified'])) {
     </ul>
   </nav>
   <main>
-    <table class="content-table">
-      <thead>
-        <tr>
-          <th> Type </th>
-          <th> Marque </th>
-          <th> Modele </th>
-          <th> Annee </th>
-          <th> Kilometres </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <?php
-          $connection = new mysqli('localhost', 'root', '', 'site');
-          $id = $_SESSION["id"];
-          $idvehi = $_SESSION['idvehi'];
-          $result = mysqli_query($connection, "SELECT TypeVE, MarqueVE, ModeleVE, AnneeVE, KilometresVE FROM vehicules WHERE idUSER='$id' AND idVE='$idvehi'");
-          while ($row = mysqli_fetch_array($result)) {
-            echo "<td>" . $row['TypeVE'] . "</td>";
-            echo "<td>" . $row['MarqueVE'] . "</td>";
-            echo "<td>" . $row['ModeleVE'] . "</td>";
-            echo "<td>" . $row['AnneeVE'] . "</td>";
-            echo "<td>" . $row['KilometresVE'] . "</td>";
-          }
-          ?>
-        </tr>
-      </tbody>
-    </table>
-    <!-- Ajout du bouton pour modifier un champ -->
-    <div class="dropdown&champs">
-      <div class="dropdown">
-        <button onclick="myFunction()" class="dropbtn">Modification d'une valeur</button>
-        <div id="myDropdown" class="dropdown-content">
-          <a id="Type" onclick="GetDisplayedField('Type')">Type</a>
-          <a id="Marque" onclick="GetDisplayedField('Marque')">Marque</a>
-          <a id="Modele" onclick="GetDisplayedField('Modele')">Modele</a>
-          <a id="Annee" onclick="GetDisplayedField('Annee')">Annee</a>
-          <a id="Km" onclick="GetDisplayedField('Km')">Kilometres</a>
+    <div id="infog">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th> Type </th>
+            <th> Marque </th>
+            <th> Modele </th>
+            <th> Annee </th>
+            <th> Kilometres </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <?php
+            $connection = new mysqli('localhost', 'root', '', 'site');
+            $id = $_SESSION["id"];
+            $idvehi = $_SESSION['idvehi'];
+            $result = mysqli_query($connection, "SELECT TypeVE, MarqueVE, ModeleVE, AnneeVE, KilometresVE FROM vehicules WHERE idUSER='$id' AND idVE='$idvehi'");
+            while ($row = mysqli_fetch_array($result)) {
+              echo "<td>" . $row['TypeVE'] . "</td>";
+              echo "<td>" . $row['MarqueVE'] . "</td>";
+              echo "<td>" . $row['ModeleVE'] . "</td>";
+              echo "<td>" . $row['AnneeVE'] . "</td>";
+              echo "<td>" . $row['KilometresVE'] . "</td>";
+            }
+            ?>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Ajout du bouton pour modifier un champ -->
+      <div class="dropdown&champs">
+        <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn">Modification d'une valeur</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a id="Type" onclick="GetDisplayedField('Type')">Type</a>
+            <a id="Marque" onclick="GetDisplayedField('Marque')">Marque</a>
+            <a id="Modele" onclick="GetDisplayedField('Modele')">Modele</a>
+            <a id="Annee" onclick="GetDisplayedField('Annee')">Annee</a>
+            <a id="Km" onclick="GetDisplayedField('Km')">Kilometres</a>
+          </div>
+        </div>
+        <div id="champs">
+          <fieldset id="Typec">
+            <input type="text" placeholder="Type" id="Typet">
+          </fieldset>
+          <fieldset id="Marquec">
+            <input type="text" placeholder="Marque" id="Marquet">
+          </fieldset>
+          <fieldset id="Modelec">
+            <input type="text" placeholder="Modele" id="Modelet">
+          </fieldset>
+          <fieldset id="Kmc">
+            <input type="number" placeholder="Kilometres" id="Kmt">
+          </fieldset>
+          <fieldset id="Anneec">
+            <input type="number" placeholder="Annee" id="Anneet">
+          </fieldset>
+          <button id="confirm" onclick="confirm()">Validation</button>
         </div>
       </div>
-      <div id="champs">
-        <fieldset id="Typec">
-          <input type="text" placeholder="Type" id="Typet">
-        </fieldset>
-        <fieldset id="Marquec">
-          <input type="text" placeholder="Marque" id="Marquet">
-        </fieldset>
-        <fieldset id="Modelec">
-          <input type="text" placeholder="Modele" id="Modelet">
-        </fieldset>
-        <fieldset id="Kmc">
-          <input type="number" placeholder="Kilometres" id="Kmt">
-        </fieldset>
-        <fieldset id="Anneec">
-          <input type="number" placeholder="Annee" id="Anneet">
-        </fieldset>
-        <button id="confirm" onclick="confirm()">Validation</button>
-      </div>
+    </div>
+    <br>
+    <div id="ctentretien">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>Contr&ocirc;le technique</th>
+            <th>Prochain CT</th>
+            <th>Entretien</th>
+            <th>Prochain Entretien</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <?php
+
+            function console_log($data){
+              echo '<script>';
+              echo 'console.log(' . json_encode($data) . ')';
+              echo '</script>';
+            }
+
+            $connection = new mysqli('localhost', 'root', '', 'site');
+            $id = $_SESSION["id"];
+            $idvehi = $_SESSION['idvehi'];
+            $result = mysqli_query($connection, "SELECT DateCTVE, DateEntretienVE FROM vehicules WHERE idUSER='$id' AND idVE='$idvehi'");
+            while ($row = mysqli_fetch_array($result)) {
+
+              $cte = strtotime($row['DateCTVE']);
+              $entretiene = strtotime($row['DateEntretienVE']);
+
+              $ct = date("d-m-Y", $cte);
+              $entretien = date("d-m-Y", $entretiene);
+
+              $ctnext = date("d-m-Y", $cte);
+              $ctnext = date('d-m-Y', strtotime('+2 years'));
+              $entretiennext = date("d-m-Y", $entretiene);
+              $entretiennext = date('d-m-Y', strtotime('+1 years'));
+
+              echo "<td>" . $ct . "</td>";
+              echo "<td>" . $ctnext . "</td>";
+              echo "<td>" . $entretien . "</td>";
+              echo "<td>" . $entretiennext . "</td>";
+            }
+            ?>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </main>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -567,7 +621,7 @@ if (isset($_POST['modified'])) {
       km = $("#Kmt").val().trim();
 
       //? Formatage des champs remplis
-      //! La vérification se fera dans la partie PHP, plus rapide que sur le JS qui demandrait plus de lignes de code
+      //! La vérification se fera dans la partie PHP, plus rapide que sur le JS qui demandrait plus de lignes de code pour r
       // type = type.val().trim();
       // modele = modele.val().trim();
       // marque = marque.val().trim();
@@ -588,9 +642,7 @@ if (isset($_POST['modified'])) {
         success: function(response) {
 
           console.log(response);
-
-          //?Plein de stuff là dedans
-
+          window.location = 'vehicule.php';
         },
         dataType: 'text'
       })

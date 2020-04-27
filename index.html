@@ -1,0 +1,265 @@
+<style>
+  body,
+  html {
+    font-family: "Poppins", sans-serif;
+    height: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8em;
+    color: #666;
+    scroll-behavior: smooth;
+  }
+
+  .pimg1,
+  .pimg2,
+  .pimg3,
+  .pimg4 {
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin-top: -10px;
+    margin-left: -10px;
+    margin-right: -8px;
+    margin-bottom: -10px;
+  }
+  .pimg1 {
+    background-image: url("img/Photovideo/close-up-photo-of-car-instrument-panel-2622122.jpg");
+    min-height: 102%;
+  }
+
+  .pimg2 {
+    background-image: url("img/Photovideo/forced-perspective-photography-of-cars-running-on-road-below-799443.jpg");
+    min-height: 500px;
+  }
+
+  .pimg3 {
+    background-image: url("img/Photovideo/set-of-tool-wrench-162553.jpg");
+    min-height: 500px;
+  }
+
+  .pimg4 {
+    background-image: url("img/Photovideo/automatic-city-control-crossing-442584.jpg");
+    min-height: 700px;
+  }
+
+  .section {
+    text-align: center;
+    padding: 50px 80px;
+    background-color: #eee;
+  }
+  .ptext {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    color: #000;
+    font-size: 27px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+  }
+
+  .ptext .border {
+    background-color: #111;
+    color: #fff;
+    padding: 20px;
+  }
+
+  .to-top {
+    z-index: 9999;
+    background: black;
+    position: fixed;
+    bottom: 1%;
+    right: 1%;
+    width: 5%;
+    height: 10%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: solid black;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.6s;
+  }
+
+  .to-top.active {
+    opacity: 1;
+    pointer-events: auto;
+    bottom: 1%;
+  }
+
+  @media (max-width: 600px) {
+    .to-top {
+      bottom: 20%;
+      right: 1%;
+      width: 15%;
+      height: 10%;
+    }
+
+    .to-top.active {
+      bottom: 18%;
+    }
+  }
+
+  .containerbutton {
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn {
+    width: 200px;
+    height: 60px;
+    background: none;
+    border: 6px solid;
+    border-radius: 8px;
+    color: #3e8cea;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+  }
+  .btn::before,
+  .btn::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 6px;
+    background: #eee;
+    transform: skewX(50deg);
+    transition: 0.4s linear;
+  }
+
+  .btn::before {
+    top: -6px;
+    left: 10%;
+  }
+
+  .btn::after {
+    bottom: -6px;
+    right: 10%;
+  }
+
+  .btn:hover::before {
+    left: 80%;
+  }
+  .btn:hover::after {
+    right: 80%;
+  }
+</style>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <title>Accueil</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="pimg1" id="main">
+      <div class="ptext">
+        <span class="border">
+          Carnet Facile
+        </span>
+      </div>
+    </div>
+
+    <section class="section section-light">
+      <h2>Simplicit&eacute;</h2>
+      <p>
+        Carnet Facile est un site vous proposant de repr&eacute;senter
+        informatiquement tout votre garage.<br />
+        Facile, intuitif et gratuit, il vous permettra de retrouver toutes vos
+        informations importantes en un coup d'oeil.
+      </p>
+    </section>
+
+    <div class="pimg2">
+      <div class="ptext">
+        <span class="border">
+          Partout, tout le temps
+        </span>
+      </div>
+    </div>
+
+    <section class="section section-light">
+      <h2>Accessibilit&eacute;</h2>
+      <p>
+        Que vous soyez &agrave; la montagne, perdu au milieu du d&eacute;sert ou
+        bien chez vos beaux-parents<br />
+        Vous pourrez toujours acc&eacute;der &agrave; vos informations.<br />
+        Peu importe le support (T&eacute;l&eacute;phone, tablette ou
+        ordinateur), l'essentiel sera &agrave; port&eacute;e de clic.
+      </p>
+    </section>
+
+    <div class="pimg3">
+      <div class="ptext">
+        <span class="border">
+          Panel d'outils
+        </span>
+      </div>
+    </div>
+
+    <section class="section section-light">
+      <h2>Fonctionnalit&eacute;s</h2>
+      <p>
+        Carnet Facile vous propose tout un ensemble de
+        fonctionnalit&eacute;s.<br />
+        Ajout d'un v&eacute;hicule, modification de ses donn&eacute;es, rappel
+        pour le futur contr&ocirc;le technique...
+      </p>
+    </section>
+
+    <div class="pimg4">
+      <div class="ptext">
+        <span class="border">
+          Rejoignez-nous
+        </span>
+      </div>
+    </div>
+    <section class="section section-light">
+      <h2>Franchissez le pas</h2>
+      <div class="containerbutton">
+        <button
+          class="btn"
+          onclick="window.location.href = 'websitepages/login.php';"
+        >
+          Se connecter
+        </button>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+        <button
+          class="btn"
+          onclick="window.location.href = 'websitepages/register.php';"
+        >
+          S'inscrire
+        </button>
+      </div>
+      <p>S'inscrire S'enregistrer</p>
+    </section>
+
+    <a href="#main" class="to-top"
+      ><i class="fas fa-chevron-up fa-stack-2x"></i
+    ></a>
+  </body>
+  <script type="text/javascript">
+    const toTop = document.querySelector(".to-top");
+
+    window.addEventListener("scroll", () => {
+      if (window.pageYOffset > 100) {
+        toTop.classList.add("active");
+      } else {
+        toTop.classList.remove("active");
+      }
+    });
+  </script>
+</html>
