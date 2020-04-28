@@ -210,26 +210,59 @@ if (isset($_POST['transmitted'])) {
   .display_garage {
     width: 100%;
     display: inline-flex;
-    background: grey;
+    background: #eee;
     box-sizing: border-box;
+    justify-content: space-around;
+    flex-wrap: wrap;
 
   }
 
   .display_vehicule {
-    flex: 1;
+    flex-basis: 23%;
+    margin: auto;
     border-style: solid;
     border-width: 3px;
     border-radius: 30px;
     border-color: blue;
-    background: cyan;
+    background: center no-repeat;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-bottom: 10px;
+  }
 
+  #wallpaper {
+    width: 60%;
+    height: 60%;
+  }
+
+  .wheel {
+    margin-top: 5%;
+    width: 45%;
+    height: 45%;
+    padding-bottom: 10px;
+  }
+
+  .plus {
+    margin-top: 5%;
+    width: 45%;
+    height: 45%;
+    padding-bottom: 10px;
   }
 
 
+  #affiche {
+    background-color: #ddd;
+  }
 
   @media screen and (max-width: 768px) {
     .display_garage {
       flex-direction: column;
+    }
+
+    .display_vehicule {
+      flex-basis: 90%;
     }
   }
 </style>
@@ -316,7 +349,6 @@ if (isset($_POST['transmitted'])) {
   </nav>
   <main>
     <div class="display_garage">
-
       <?php
       $connection = new mysqli('localhost', 'root', '', 'site');
       $id = $_SESSION["id"];
@@ -324,46 +356,60 @@ if (isset($_POST['transmitted'])) {
       $numvehi = 0; //Compte le nombre de véhicule, en partant de 0
       while ($row = mysqli_fetch_array($result)) {
         echo "<div class='display_vehicule' id='" . $numvehi . "' onclick='clickediv(" . $numvehi . ")' " . "style='cursor: pointer;'>";
-        echo "<div class='display_marquemodele'>";
+        if (($row['TypeVE']) == "voiture") {
+          echo "<img id ='wallpaper' src='../img/icones/automobile.svg'";
+        } elseif (($row['TypeVE']) == "moto") {
+          echo "<img id ='wallpaper' src='../img/icones/motorbike.svg'";
+        } else {
+          echo "<img id ='wallpaperwheel' class='wheel' src='../img/icones/steering-wheel.svg'";
+        }
+        echo ">";
+        echo "<div class='display_marquemodele' id='affiche'>";
         echo $row['MarqueVE'] . " " . $row['ModeleVE'];
         echo "</div>";
-        echo "<div class='display_annee'>";
+        echo "<div class='display_annee' id='affiche'>";
         echo $row['AnneeVE'];
         echo "</div>";
         echo "</div>";
         $numvehi = $numvehi + 1;
       }
+      echo "<div class='display_vehicule' id='plus' onclick='redirect()' style='cursor: pointer;'>";
+      echo "<img id='wallpaperwheel' class='plus' src='../img/plus.svg'>";
+      echo "<div class='display_marquemodele' id='affiche'>";
+      echo "Ajout d'un véhicule";
+      echo "</div>";
+      echo "</div>";
       ?>
-
-
-      <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-      <script type="text/javascript">
-        function clickediv(id) {
-          if (id === undefined) {} else {
-            $.ajax({
-              url: 'garage.php',
-              method: 'POST',
-              data: {
-                transmitted: 1,
-                idPHP: id,
-              },
-              success: function(response) {
-                console.log(response);
-                if (response.indexOf('Ok') >= 0) {
-                  window.location = 'vehicule.php';
-                }
-              },
-              dataType: 'text'
-            })
-          }
-        } //!Fin de la fonction de redirection
-      </script>
-
-
-
-
     </div>
   </main>
 </body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+</script>
+<script type="text/javascript">
+  function redirect() {
+    window.location = 'add.php';
+  }
+
+  function clickediv(id) {
+    if (id === undefined) {} else {
+      $.ajax({
+        url: 'garage.php',
+        method: 'POST',
+        data: {
+          transmitted: 1,
+          idPHP: id,
+        },
+        success: function(response) {
+          console.log(response);
+          if (response.indexOf('Ok') >= 0) {
+            window.location = 'vehicule.php';
+          }
+        },
+        dataType: 'text'
+      })
+    }
+  } //!Fin de la fonction de redirection
+</script>
+
 
 </html>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 if (isset($_POST['modified'])) {
   $connection = new mysqli('localhost', 'root', '', 'site');
   //? Récupération des valeurs
@@ -106,10 +107,38 @@ if (isset($_POST['modified'])) {
   if (preg_match('[^A-Za-z0-9]', $modele)) exit("Modèle non valide");
 
   //! Le fun commence ici
-
-
-
 }
+
+if (isset($_POST['supression'])) {
+  $connection = new mysqli('localhost', 'root', '', 'site');
+  $id = $_SESSION["id"];
+  $idvehi = $_SESSION['idvehi'];
+  $sql = "DELETE FROM vehicules WHERE idVE='$idvehi' AND idUSER='$id'";
+  if (mysqli_query($connection, $sql) === TRUE) exit("Success");
+  else exit("Flop");
+}
+
+if (isset($_POST['modifdate'])) {
+  $connection = new mysqli('localhost', 'root', '', 'site');
+  $id = $_SESSION["id"];
+  $idvehi = $_SESSION['idvehi'];
+
+  if (isset($_POST['entretien'])) {
+    $date = $_POST['entretienPHP'];
+    $sql = "UPDATE vehicules SET DateEntretienVE='$date' WHERE idUSER='$id' AND idVE='$idvehi'";
+    if ((mysqli_query($connection, $sql)) === TRUE) {
+      exit("Success");
+    }
+  }
+  if (isset($_POST['ct'])) {
+    $date = $_POST['ctPHP'];
+    $sql = "UPDATE vehicules SET DateCTVE='$date' WHERE idUSER='$id' AND idVE='$idvehi'";
+    if ((mysqli_query($connection, $sql)) === TRUE) {
+      exit("Success");
+    }
+  } else exit("Erreur");
+}
+
 ?>
 <style type="text/css">
   * {
@@ -384,6 +413,14 @@ if (isset($_POST['modified'])) {
   fieldset {
     border: none;
   }
+
+  .acacher {
+    display: none;
+  }
+
+  .dropbtn #btnctentretien {
+    height: 170px;
+  }
 </style>
 <html>
 
@@ -543,7 +580,8 @@ if (isset($_POST['modified'])) {
           <tr>
             <?php
 
-            function console_log($data){
+            function console_log($data)
+            {
               echo '<script>';
               echo 'console.log(' . json_encode($data) . ')';
               echo '</script>';
@@ -575,14 +613,73 @@ if (isset($_POST['modified'])) {
           </tr>
         </tbody>
       </table>
+      <button id="btnctentretien" class="dropbtn" onclick="ctshow()">CT passé</button>
+      <button id="btnctentretien" class="dropbtn" onclick="entretienshow()">Entretien effectué</button>
+      <div id="diventretien" class="acacher">
+        <h2>Quelle date?</h2>
+        <input type="date" id="dateentretien" min="1920-01-01" value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
+        <h4 id="dispmsgentretien"></h4>
+        <button id="confirmed" class="dropbtn" onclick="modif('entretien')">Validation</button>
+      </div>
+
+      <div id="divct" class="acacher">
+        <h2>Quelle date?</h2>
+        <input type="date" id="datect" min="1920-01-01" value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
+        <h4 id="dispmsgct"></h4>
+        <button id="confirmed" class="dropbtn" onclick="modif('ct')">Validation</button>
+      </div>
+
     </div>
+    <br />
+    <button onclick="deletevehi()" style=" background-color:red; color:white;">Supprimer le v&eacute;hicule</button>
   </main>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
   <script type="text/javascript">
     function myFunction() {
       document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function deletevehi() {
+      $.confirm({
+        title: 'Attention!',
+        content: 'Voulez-vous vraiment supprimer le véhicule?',
+        buttons: {
+          Oui: function() {
+            $.alert('Véhicule supprimé!');
+            $.ajax({
+              url: 'vehicule.php',
+              method: 'POST',
+              data: {
+                supression: 1,
+              },
+              success: function(response) {
+                console.log(response);
+                if (response.indexOf('Success') >= 0) {
+                  window.location = 'garage.php';
+                }
+              },
+              dataType: 'text'
+            })
+          },
+          Non: function() {
+            $.alert('Annulé!');
+          },
+        }
+      });
+    }
+
+    function ctshow() {
+      var element = document.getElementById("divct");
+      element.style.display = "block";
+    }
+
+    function entretienshow() {
+      var element = document.getElementById("diventretien");
+      element.style.display = "block";
     }
 
     // Ferme le menu si l'utilisateur clique à côté de celui-ci
@@ -622,9 +719,6 @@ if (isset($_POST['modified'])) {
 
       //? Formatage des champs remplis
       //! La vérification se fera dans la partie PHP, plus rapide que sur le JS qui demandrait plus de lignes de code pour r
-      // type = type.val().trim();
-      // modele = modele.val().trim();
-      // marque = marque.val().trim();
       annee = parseInt(annee, 10);
       km = parseInt(km, 10);
 
@@ -646,6 +740,42 @@ if (isset($_POST['modified'])) {
         },
         dataType: 'text'
       })
+    }
+
+    function modif(a) {
+      if (a == "entretien") {
+        transmitted = $("#dateentretien").val();
+        $.ajax({
+          url: 'vehicule.php',
+          method: 'POST',
+          data: {
+            modifdate: 1,
+            entretien: 1,
+            entretienPHP: transmitted
+          },
+          success: function(response) {
+            console.log(response);
+            window.location = 'vehicule.php';
+          },
+          dataType: 'text'
+        })
+      } else {
+        transmitted = $("#datect").val();
+        $.ajax({
+          url: 'vehicule.php',
+          method: 'POST',
+          data: {
+            modifdate: 1,
+            ct: 1,
+            ctPHP: transmitted
+          },
+          success: function(response) {
+            console.log(response);
+            window.location = 'vehicule.php';
+          },
+          dataType: 'text'
+        })
+      }
     }
   </script>
 </body>
