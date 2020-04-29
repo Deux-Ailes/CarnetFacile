@@ -1,6 +1,7 @@
 <?php
 session_start();
-
+$id = $_SESSION["id"];
+$idvehi = $_SESSION['idvehi'];
 
 if (isset($_POST['modified'])) {
   $connection = new mysqli('localhost', 'root', '', 'site');
@@ -36,6 +37,8 @@ if (isset($_POST['modified'])) {
     $chainetype .= "s";
     $itype = 1;
 
+    $type = strtolower($type);
+    $type = ucfirst($type);
     //? RequêteSQl
     $sql = "UPDATE vehicules SET TypeVE='$type' WHERE idUSER='$id' AND idVE='$idvehi'";
     mysqli_query($connection, $sql);
@@ -139,6 +142,34 @@ if (isset($_POST['modifdate'])) {
   } else exit("Erreur");
 }
 
+if (isset($_POST['pieceadded'])) {
+  $connection = new mysqli('localhost', 'root', '', 'site');
+  $date = $_POST['datePI'];
+  $km = $_POST['kmPI'];
+  $type = $_POST['typePI'];
+  $prix = $_POST['prixPI'];
+  $type = $connection->real_escape_string($type);
+  $type = strtolower($type);
+  $type = ucfirst($type);
+  $date = date("Y-m-d", strtotime($date));
+  $sql = "INSERT INTO pieces (KmPI, TypePI, IdVE, PrixPI, DatePI) VALUES (?, ?, ?, ?, ?)";
+  if ($stmt = mysqli_prepare($connection, $sql)) {
+    mysqli_stmt_bind_param($stmt, "dsdds", $kmstmt, $typestmt, $idvestmt, $prixstmt, $datestmt);
+    $kmstmt = $km;
+    $typestmt = $type;
+    $idvestmt = $idvehi;
+    $prixstmt = $prix;
+    $datestmt = $date;
+
+    if (mysqli_stmt_execute($stmt)) {
+      exit("Le véhicule est bien enregistré, vous allez être redirigé dans 3 secondes vers l'accueil.");
+    }
+
+    exit("On est arrivé au bout, c'est déjà bien, mais ça a bugué");
+  } else {
+    exit("Erreur d'username les bros");
+  }
+}
 ?>
 <style type="text/css">
   * {
@@ -421,6 +452,10 @@ if (isset($_POST['modifdate'])) {
   .dropbtn #btnctentretien {
     height: 170px;
   }
+
+  #pieceform {
+    display: none;
+  }
 </style>
 <html>
 
@@ -630,7 +665,62 @@ if (isset($_POST['modifdate'])) {
       </div>
 
     </div>
-    <br />
+    <br>
+    <div id="pieces">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>Pièce</th>
+            <th>Kilomètre</th>
+            <th>Prix (€)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <?php
+            $connection = new mysqli('localhost', 'root', '', 'site');
+            $id = $_SESSION["id"];
+            $idvehi = $_SESSION['idvehi'];
+            $lignes = 0;
+            $result = mysqli_query($connection, "SELECT TypePI, KmPI, PrixPI, DatePI FROM pieces WHERE idVE='$idvehi'");
+            while ($row = mysqli_fetch_array($result)) {
+              echo "<tr>";
+              echo "<td>" . $row['TypePI'] . "</td>";
+              echo "<td>" . $row['KmPI'] . "</td>";
+              echo "<td>" . $row['PrixPI'] . "</td>";
+              echo "<td>" . $row['DatePI'] . "</td>";
+              echo "</tr>";
+              $lignes = 1;
+            }
+            if ($lignes == 0) {
+              echo "<td>Rien</td>";
+              echo "<td>à</td>";
+              echo "<td>afficher</td>";
+              echo "<td>pour l'instant</td>";
+            }
+            ?>
+          </tr>
+        </tbody>
+      </table>
+      <button onclick="pieceshow()" class="dropbtn">Ajout d'une pièce</button>
+      <div id="pieceform">
+        <fieldset id="Typepiece">
+          <input type="text" placeholder="Type" id="Typepi">
+        </fieldset>
+        <fieldset id="Kmpiece">
+          <input type="number" placeholder="Kilometres" id="Kmpi">
+        </fieldset>
+        <fieldset id="Prixpiece">
+          <input type="number" placeholder="Prix en € arrondi" id="Prixpi">
+        </fieldset>
+        <fieldset id="Anneepiece">
+          <input type="date" id="Datepi" min="1920-01-01" value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
+        </fieldset>
+        <button id="confirmpi" onclick="confirmpi()">Validation</button>
+      </div>
+    </div>
+    <br>
     <button onclick="deletevehi()" style=" background-color:red; color:white;">Supprimer le v&eacute;hicule</button>
   </main>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -675,11 +765,29 @@ if (isset($_POST['modifdate'])) {
     function ctshow() {
       var element = document.getElementById("divct");
       element.style.display = "block";
+      var element = document.getElementById("diventretien");
+      element.style.display = "none";
+      var element1 = document.getElementById("pieceform");
+      element1.style.display = "none";
+    }
+
+    function pieceshow() {
+      var element = document.getElementById("pieceform");
+      element.style.display = "block";
+      var element1 = document.getElementById("diventretien");
+      element1.style.display = "none";
+
+      var element = document.getElementById("divct");
+      element.style.display = "none";
     }
 
     function entretienshow() {
       var element = document.getElementById("diventretien");
       element.style.display = "block";
+      var element1 = document.getElementById("pieceform");
+      element1.style.display = "none";
+      var element = document.getElementById("divct");
+      element.style.display = "none";
     }
 
     // Ferme le menu si l'utilisateur clique à côté de celui-ci
@@ -740,6 +848,48 @@ if (isset($_POST['modifdate'])) {
         },
         dataType: 'text'
       })
+    }
+
+    function confirmpi() {
+      //? Récupération de la data de tous les champs
+      type = $("#Typepi").val().trim();
+      date = $("#Datepi").val();
+      prix = $("#Prixpi").val();
+      km = $("#Kmpi").val();
+
+      //? Formatage des champs remplis
+      prix = parseInt(prix, 10);
+      km = parseInt(km, 10);
+      error = 0;
+
+      if (type == "") {
+        error = 1;
+      }
+      if (prix == 0) {
+        error = 1;
+      }
+      if (km == 0) {
+        error = 1;
+      }
+
+
+      if (error == 0) {
+        $.ajax({
+          url: 'vehicule.php',
+          method: 'POST',
+          data: {
+            pieceadded: 1,
+            typePI: type,
+            datePI: date,
+            prixPI: prix,
+            kmPI: km
+          },
+          success: function(response) {
+            console.log(response);
+          },
+          dataType: 'text'
+        })
+      }
     }
 
     function modif(a) {

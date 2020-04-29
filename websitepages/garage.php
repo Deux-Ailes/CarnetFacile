@@ -356,9 +356,9 @@ if (isset($_POST['transmitted'])) {
       $numvehi = 0; //Compte le nombre de véhicule, en partant de 0
       while ($row = mysqli_fetch_array($result)) {
         echo "<div class='display_vehicule' id='" . $numvehi . "' onclick='clickediv(" . $numvehi . ")' " . "style='cursor: pointer;'>";
-        if (($row['TypeVE']) == "voiture") {
+        if (($row['TypeVE']) == "Voiture" || ($row['TypeVE']) == "voiture") {
           echo "<img id ='wallpaper' src='../img/icones/automobile.svg'";
-        } elseif (($row['TypeVE']) == "moto") {
+        } elseif (($row['TypeVE']) == "Moto" || ($row['TypeVE']) == "moto") {
           echo "<img id ='wallpaper' src='../img/icones/motorbike.svg'";
         } else {
           echo "<img id ='wallpaperwheel' class='wheel' src='../img/icones/steering-wheel.svg'";

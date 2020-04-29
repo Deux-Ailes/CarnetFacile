@@ -23,6 +23,7 @@
             $ctdate = date("Y-m-d", strtotime($ct));
             $entretiendate = date("Y-m-d", strtotime($entretien));
             $type = strtolower($type);
+            $type = ucfirst($type);
 
             //?Test des valeurs avec filtre
             if (preg_match('[^A-Za-z0-9]', $type)) exit("Type non valide");
