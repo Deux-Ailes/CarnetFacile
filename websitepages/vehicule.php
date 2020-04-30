@@ -614,14 +614,6 @@ if (isset($_POST['pieceadded'])) {
         <tbody>
           <tr>
             <?php
-
-            function console_log($data)
-            {
-              echo '<script>';
-              echo 'console.log(' . json_encode($data) . ')';
-              echo '</script>';
-            }
-
             $connection = new mysqli('localhost', 'root', '', 'site');
             $id = $_SESSION["id"];
             $idvehi = $_SESSION['idvehi'];
@@ -631,14 +623,13 @@ if (isset($_POST['pieceadded'])) {
               $cte = strtotime($row['DateCTVE']);
               $entretiene = strtotime($row['DateEntretienVE']);
 
+              //? Formatage des dates en jour/mois/année
               $ct = date("d-m-Y", $cte);
               $entretien = date("d-m-Y", $entretiene);
 
-              $ctnext = date("d-m-Y", $cte);
-              $ctnext = date('d-m-Y', strtotime('+2 years'));
-              $entretiennext = date("d-m-Y", $entretiene);
-              $entretiennext = date('d-m-Y', strtotime('+1 years'));
-
+              //? Ajout d'un temps aux dates
+              $entretiennext = date('d-m-Y', strtotime('+1 year', strtotime($entretien)));
+              $ctnext = date('d-m-Y', strtotime('+2 year', strtotime($ct)));
               echo "<td>" . $ct . "</td>";
               echo "<td>" . $ctnext . "</td>";
               echo "<td>" . $entretien . "</td>";

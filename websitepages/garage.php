@@ -360,6 +360,8 @@ if (isset($_POST['transmitted'])) {
           echo "<img id ='wallpaper' src='../img/icones/automobile.svg'";
         } elseif (($row['TypeVE']) == "Moto" || ($row['TypeVE']) == "moto") {
           echo "<img id ='wallpaper' src='../img/icones/motorbike.svg'";
+        } elseif (($row['TypeVE']) == "Camion" || ($row['TypeVE']) == "camion") {
+          echo "<img id ='wallpaper' src='../img/icones/deliver.svg'";
         } else {
           echo "<img id ='wallpaperwheel' class='wheel' src='../img/icones/steering-wheel.svg'";
         }
