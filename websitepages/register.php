@@ -32,7 +32,7 @@ if(isset($_POST['login'])) {
 
 				if(mysqli_stmt_execute($stmt)){
 					$_SESSION['loggedIN'] = '1';
-					$_SESSION['username'] = $username;
+					$_SESSION['username'] = $username;	
 					$data = $connection->query ("SELECT id FROM users WHERE username='$username'");
 					if($data->num_rows > 0){						
 						while ($row = mysqli_fetch_row($data)) {

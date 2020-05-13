@@ -8,7 +8,6 @@ if (isset($_SESSION['loggedIN'])) {
 
 if (isset($_POST['login'])) {
 	$connection = new mysqli('localhost', 'root', '', 'site');
-
 	$username = $connection->real_escape_string($_POST['usernamePHP']);
 	$password = $connection->real_escape_string($_POST['passwordPHP']);
 
